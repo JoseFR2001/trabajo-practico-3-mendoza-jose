@@ -71,7 +71,6 @@ contenedorPadre.addEventListener("click", (e) => {
 
 const buscar = document.getElementById("btn-buscar");
 const inputBuscar = document.getElementById("input-buscar");
-const limpiar = document.getElementById('btn-limpiar')
 
 buscar.addEventListener("click", async function () {
   const valorInput = inputBuscar.value;
@@ -108,8 +107,38 @@ buscar.addEventListener("click", async function () {
   });
 });
 
+limpiar = document.getElementById('btn-limpiar')
+
+limpiar.addEventListener("click", async () => {
+  inputBuscar.value = ""; // Vacía el campo de búsqueda
+  contenedorPadre.innerHTML = ""; // Vacía el contenido actual
+  
+  const data = await cargarDatos(urlDragonBall);
+  const dataPersonajes = data.items;
+  let contenidoPersonajes = "";
+
+  dataPersonajes.forEach((personaje) => {
+    contenidoPersonajes += `
+                <div class="col-3 pb-2 d-flex justify-content-center" data-id=${personaje.id}>
+                    <div class="card bg-dark p-2 text-dark bg-opacity-10 mx-2 my-2" style="width: 500px;
+                     overflow: visible; position: relative;
+                     border: none;">
+                        <img
+                            class="card-img-top p-2 img-hover" alt=${personaje.name}
+                            style="width: 100%; height: 400px; object-fit: contain;"
+                            src="${personaje.image}"
+                        />
+                        <div class="card card-body">
+                            <h5 class="card-title">${personaje.name}</h5>
+                            <p class="card-text">${personaje.race} - ${personaje.gender}</p>
+                            <button class="btn btn-success btn-ver-detalles">Ver más</button>
+                        </div>
+                    </div>
+                </div>
+        `;
+  });
+
+  contenedorPadre.innerHTML = contenidoPersonajes;
+});
 
 
-limpiar.addEventListener('click', async function (){
-
-})
