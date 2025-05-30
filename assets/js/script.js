@@ -1,6 +1,11 @@
+// Mis contastes que usare
 const contenedorPadre = document.getElementById("contenedor-data");
 const urlDragonBall = "https://dragonball-api.com/api/characters";
+const buscar = document.getElementById("btn-buscar");
+const inputBuscar = document.getElementById("input-buscar");
+limpiar = document.getElementById('btn-limpiar')
 
+// Validación de la api
 const cargarDatos = async (url) => {
   try {
     const response = await fetch(
@@ -18,6 +23,7 @@ const cargarDatos = async (url) => {
   }
 };
 
+// Función asincrinica para ver la descripción de los personajes
 const verDetalles = async (id) => {
   try {
     const response = await fetch(`${urlDragonBall}/${id}`);
@@ -33,9 +39,11 @@ const verDetalles = async (id) => {
   }
 };
 
+// Función para cargar los datos personajes 
 document.addEventListener("DOMContentLoaded", async () => {
   const data = await cargarDatos(urlDragonBall);
   const dataPersonajes = data.items;
+  // Cree una variable para cargar los datos
   let contenidoPersonajes = "";
   dataPersonajes.forEach((personaje) => {
     contenidoPersonajes += `
@@ -57,9 +65,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </div>
         `;
   });
+  // Cargo esos datos en el contenedor padre
   contenedorPadre.innerHTML = contenidoPersonajes;
 });
 
+// Función para ver la descripción
 contenedorPadre.addEventListener("click", (e) => {
   if (e.target.classList.contains("btn-ver-detalles")) {
     const cardPadre = e.target.closest(".col-3");
@@ -69,9 +79,8 @@ contenedorPadre.addEventListener("click", (e) => {
   }
 });
 
-const buscar = document.getElementById("btn-buscar");
-const inputBuscar = document.getElementById("input-buscar");
 
+// Función para buscar a los personajes por nombre
 buscar.addEventListener("click", async function () {
   const valorInput = inputBuscar.value;
 
@@ -107,11 +116,11 @@ buscar.addEventListener("click", async function () {
   });
 });
 
-limpiar = document.getElementById('btn-limpiar')
 
+// Función para limpiara la busqueda
 limpiar.addEventListener("click", async () => {
-  inputBuscar.value = ""; // Vacía el campo de búsqueda
-  contenedorPadre.innerHTML = ""; // Vacía el contenido actual
+  inputBuscar.value = ""; 
+  contenedorPadre.innerHTML = ""; 
   
   const data = await cargarDatos(urlDragonBall);
   const dataPersonajes = data.items;
