@@ -1,11 +1,11 @@
-const contenedorPadre = document.getElementById('contenedor-data');
-const btnBuscar = document.getElementById('btn-buscar');
-const contenedorBuscador = document.getElementById('buscador')
-const urlDragonBall = 'https://dragonball-api.com/api/characters'
+const contenedorPadre = document.getElementById("contenedor-data");
+const urlDragonBall = "https://dragonball-api.com/api/characters";
 
 const cargarDatos = async (url) => {
-   try {
-        const response = await fetch('https://dragonball-api.com/api/characters?limit=58')
+  try {
+    const response = await fetch(
+      "https://dragonball-api.com/api/characters?limit=58"
+    );
     if (!response.ok) {
       throw new Error("Error en la API");
     }
@@ -33,35 +33,13 @@ const verDetalles = async (id) => {
   }
 };
 
-
-
-// btnBuscar.addEventListener('click', async () => {
-//     const data = await cargarDatos(urlDragonBall);
-//     const dataPersonajes= data.items;
-//     console.log(data);
-//     dataPersonajes.forEach((personaje) => {
-//         contenedorPadre.innerHTML += `
-//         <div class="col-3 pb-2 d-flex justify-content-center" data-id=${personaje.id}>
-//             <div class="card">
-//                 <img class="card-img-top" src=${personaje.image} alt=${personaje.name}/>
-//                 <div class="card-body">
-//                     <h5 class="card-title">${personaje.name}</h5>
-//                     <p class="card-text">${personaje.race} - ${personaje.gender}</p>
-//                     <button class="btn btn-success btn-ver-detalles">Ver más</button>
-//                 </div>
-//             </div>
-//         </div>
-//         `;
-//     });
-// })
-
 document.addEventListener("DOMContentLoaded", async () => {
-    const data = await cargarDatos(urlDragonBall);
-    const dataPersonajes = data.items;
-    let htmlContent = '';
-    dataPersonajes.forEach((personaje) => {
-        htmlContent += `
-                <div class="col-3 pb-2 d-flex justify-content-center" data-id=${personaje.id}>
+  const data = await cargarDatos(urlDragonBall);
+  const dataPersonajes = data.items;
+  let contenidoPersonajes = "";
+  dataPersonajes.forEach((personaje) => {
+    contenidoPersonajes += `
+                <div class="personajes-dbz col-3 pb-2 d-flex justify-content-center" data-id=${personaje.id}>
                     <div class="card bg-dark p-2 text-dark bg-opacity-10 mx-2 my-2" style="width: 500px;
                      overflow: visible; position: relative;
                      border: none;">
@@ -78,9 +56,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                     </div>
                 </div>
         `;
-    });
-    contenedorPadre.innerHTML = htmlContent;
-    console.log(contenedorPadre)
+  });
+  contenedorPadre.innerHTML = contenidoPersonajes;
 });
 
 contenedorPadre.addEventListener("click", (e) => {
@@ -92,57 +69,47 @@ contenedorPadre.addEventListener("click", (e) => {
   }
 });
 
-// contenedorBuscador.addEventListener('keyup', (e) =>{
-//   console.log(e.target.value)
-//   if(e.target.matches('#buscador')){
-//     document.querySelectorAll('.personajess').forEach(personaje => {
-//       personaje.textContent.toLocaleLowerCase().includes(e.targer.value)
-//       ? personaje.classList.remove('filtro')
-//       :personaje.classList.add('filtro')
-//     })
-//   }
-// })
+const buscar = document.getElementById("btn-buscar");
+const inputBuscar = document.getElementById("input-buscar");
+const limpiar = document.getElementById('btn-limpiar')
 
-contenedorBuscador.addEventListener('keyup', (e) => {
-  const textoBusqueda = e.target.value.toLowerCase();
-  console.log("Buscando:", textoBusqueda);
+buscar.addEventListener("click", async function () {
+  const valorInput = inputBuscar.value;
 
-  document.querySelectorAll('personajes-dbz').forEach(personaje => {
-    personaje.querySelectorAll(".card-title").textContent.toLowerCase().includes(textoBusqueda)
-      ? personaje.classList.remove('filtro')
-      : personaje.classList.add('filtro');
+  if (valorInput === "") {
+    return alert("Debe escribir")
+  }
+
+  const respuesta = await fetch(
+    `https://dragonball-api.com/api/characters?name=${valorInput}`
+  );
+  const datos = await respuesta.json();
+  contenedorPadre.innerHTML = ""
+
+  datos.forEach((personaje) => {
+    contenedorPadre.innerHTML += `
+                <div class="col-3 pb-2 d-flex justify-content-center" data-id=${personaje.id}>
+                    <div class="card bg-dark p-2 text-dark bg-opacity-10 mx-2 my-2" style="width: 500px;
+                     overflow: visible; position: relative;
+                     border: none;">
+                        <img
+                            class="card-img-top p-2 img-hover" alt=${personaje.name}
+                            style="width: 100%; height: 400px; object-fit: contain;"
+                            src="${personaje.image}"
+                        />
+                        <div class="card card-body">
+                            <h5 class="card-title">${personaje.name}</h5>
+                            <p class="card-text">${personaje.race} - ${personaje.gender}</p>
+                            <button class="btn btn-success btn-ver-detalles">Ver más</button>
+                        </div>
+                    </div>
+                </div>
+                `;
   });
 });
 
-btnBuscar.addEventListener('click', async () => {
-  const termino = contenedorBuscador.value.trim();
-  if (termino === '') {
-    alert('Por favor, escribí un nombre para buscar.');
-    return;
-  }
 
-  try {
-    const data = await cargarDatos(`${urlDragonBall}?name=${termino.toLowerCase()}`);
-    const personajes = data.items;
 
-    if (!personajes || personajes.length === 0) {
-      contenedorPadre.innerHTML = `<p class="text-center">No se encontraron resultados.</p>`;
-      return;
-    }
+limpiar.addEventListener('click', async function (){
 
-    renderizarPersonajes(personajes);
-  } catch (error) {
-    contenedorPadre.innerHTML = `<p class="text-center text-danger">Ocurrió un error al consultar la API.</p>`;
-  }
-});
-
-// contenedorBuscador.addEventListener('keyup', (e) => {
-//   const textoBusqueda = e.target.value.toLowerCase();
-//   console.log("Buscando:", textoBusqueda);
-//   document.querySelectorAll('.personajes-dbz').forEach(personaje => {
-//   personaje.querySelector(".card-title").textContent.toLowerCase().includes(textoBusqueda)
-//     ? personaje.classList.remove('filtro')
-//     : personaje.classList.add('filtro');
-// });
-// }
-
+})
